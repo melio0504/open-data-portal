@@ -132,12 +132,12 @@ export function Layout({
               </div>
               <div></div>
               <div>
-                  <h4 class="text-white font-bold mb-4">About</h4>
+                  <h4 class="text-white font-bold mb-4">Links</h4>
                   <ul class="space-y-2.5 text-sm">
                       <li><a href="https://github.com/bettergovph/open-data-portal" target="_blank"
-                             class="hover:text-white transition-colors">Open Data Portal</a></li>
+                             class="hover:text-white transition-colors">Open Data Portal repository</a></li>
                       <li><a href="https://open-data-portal.bettergov.ph/docs" target="_blank"
-                             class="hover:text-white transition-colors">Open Data API</a></li>
+                             class="hover:text-white transition-colors">Open Data API Explorer</a></li>
                   </ul>
               </div>
           </div>
