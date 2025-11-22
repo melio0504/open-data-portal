@@ -10,7 +10,7 @@
     "css:watch": "npx tailwindcss -i ./src/styles/main.css -o public/styles.css --watch",
     "deploy": "pnpm run css:build:prod && wrangler deploy",
     "lint": "biome check",
-    "db:migrate:remote": "wrangler d1 migrations apply open-data-db",
+    "db:migrate:remote": "wrangler d1 migrations apply open-data-db --remote",
     "db:migrate:local": "wrangler d1 migrations apply open-data-db --local",
     "db:init": "tsx scripts/init-db.ts",
     "db:init:local": "pnpm run db:init && wrangler d1 execute open-data-db --local --file=./scripts/init.sql",
