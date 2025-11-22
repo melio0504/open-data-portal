@@ -55,12 +55,12 @@ A community-run portal (and API) for exploring publicly available datasets.
 
 ### API Endpoints
 
-- `GET /api/datasets` - List datasets with search and filters
-- `GET /api/datasets/:id` - Get dataset details
-- `GET /api/publishers` - List publishers
-- `GET /api/categories` - List categories
-- `GET /api/stats` - Platform statistics
-- `GET /api/ping` - Health check
+- `GET /api/v1/datasets` - List datasets with search and filters
+- `GET /api/v1/datasets/:id` - Get dataset details
+- `GET /api/v1/publishers` - List publishers
+- `GET /api/v1/categories` - List categories
+- `GET /api/v1/stats` - Platform statistics
+- `GET /api/v1/ping` - Health check
 
 ### API Documentation
 
