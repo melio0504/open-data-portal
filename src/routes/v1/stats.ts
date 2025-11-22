@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is acceptable in Hono routes */
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { queryOne } from "../lib/db";
-import { ErrorSchema, StatsSchema } from "../lib/schemas";
-import type { Stats } from "../lib/types";
+import { queryOne } from "../../lib/db";
+import { ErrorSchema, StatsSchema } from "../../lib/schemas";
+import type { Stats } from "../../lib/types";
 
 const app = new OpenAPIHono();
 

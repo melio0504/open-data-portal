@@ -1,14 +1,14 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is acceptable in Hono routes */
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import { query, queryOne } from "../lib/db";
+import { query, queryOne } from "../../lib/db";
 import {
   createApiResponseSchema,
   PaginationInfoSchema,
   PublisherListQuerySchema,
   PublisherSchema,
-} from "../lib/schemas";
-import type { Publisher } from "../lib/types";
-import { calculatePagination } from "../lib/utils";
+} from "../../lib/schemas";
+import type { Publisher } from "../../lib/types";
+import { calculatePagination } from "../../lib/utils";
 
 const app = new OpenAPIHono();
 

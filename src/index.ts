@@ -3,13 +3,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
 import { initDB } from "./lib/db";
 import type { Bindings } from "./lib/types";
-import categoriesRoutes from "./routes/categories";
-// Import API routes
-import datasetsRoutes from "./routes/datasets";
-import pingRoutes from "./routes/ping";
-import publishersRoutes from "./routes/publishers";
-import resourcesRoutes from "./routes/resources";
-import statsRoutes from "./routes/stats";
+import { apiV1Routes } from "./routes/v1";
 
 // Import view routes
 import viewIndexRoute from "./view";
@@ -43,14 +37,26 @@ app.route("/contribute", viewContributeRoute);
 app.route("/", viewIndexRoute);
 
 // API routes
-app.route("/api/datasets", datasetsRoutes);
-app.route("/api/publishers", publishersRoutes);
-app.route("/api/categories", categoriesRoutes);
-app.route("/api/resources", resourcesRoutes);
-app.route("/api/stats", statsRoutes);
-app.route("/api/ping", pingRoutes);
+app.route("/api/v1", apiV1Routes);
 
-// OpenAPI documentation
+// OpenAPI documentation for v1
+app.doc("/openapi/v1.json", (c) => ({
+  openapi: "3.1.0",
+  info: {
+    title: "Open Data Portal API",
+    version: "1.0.0",
+    description:
+      "Public API for accessing open datasets with search, filtering, and pagination capabilities.",
+  },
+  servers: [
+    {
+      url: new URL(c.req.url).origin,
+      description: "Open Data Portal API v1",
+    },
+  ],
+}));
+
+// Default OpenAPI (points to latest version)
 app.doc("/openapi.json", (c) => ({
   openapi: "3.1.0",
   info: {
@@ -62,15 +68,39 @@ app.doc("/openapi.json", (c) => ({
   servers: [
     {
       url: new URL(c.req.url).origin,
-      description: "Open Data Portal API",
+      description: "Open Data Portal API (latest: v1)",
     },
   ],
 }));
 
-// Swagger UI
+// Swagger UI for v1
+app.get("/docs/v1", swaggerUI({ url: "/openapi/v1.json" }));
+
+// Default Swagger UI (points to latest)
 app.get("/docs", swaggerUI({ url: "/openapi.json" }));
 
-// Scalar API Reference (modern, beautiful alternative to Swagger)
+// Scalar API Reference for v1
+app.get("/reference/v1", (c) => {
+  return c.html(`
+    <!doctype html>
+    <html>
+      <head>
+        <title>API Reference - Open Data API v1</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body>
+        <script
+          id="api-reference"
+          data-url="/openapi/v1.json"
+          data-configuration='{"theme":"purple"}'
+          src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+      </body>
+    </html>
+  `);
+});
+
+// Default Scalar API Reference (points to latest)
 app.get("/reference", (c) => {
   return c.html(`
     <!doctype html>

@@ -37,7 +37,7 @@ app.get("/", async (c) => {
             grid.classList.add('hidden');
 
             try {
-                const response = await fetch('/api/categories');
+                const response = await fetch('/api/v1/categories');
                 const data = await response.json();
 
                 if (data.success && data.data) {

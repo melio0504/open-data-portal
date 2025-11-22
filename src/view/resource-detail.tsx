@@ -87,7 +87,7 @@ app.get("/:resourceId", async (c) => {
       async function loadResource() {
         try {
           // Fetch resource details directly
-          const resourceResponse = await fetch(\`/api/resources/\${resourceId}\`);
+          const resourceResponse = await fetch(\`/api/v1/resources/\${resourceId}\`);
           const resourceData = await resourceResponse.json();
 
           if (!resourceData.success || !resourceData.data) {
@@ -98,7 +98,7 @@ app.get("/:resourceId", async (c) => {
           const resource = resourceData.data;
 
           // Fetch parent dataset details
-          const datasetResponse = await fetch(\`/api/datasets/\${resource.dataset_id}\`);
+          const datasetResponse = await fetch(\`/api/v1/datasets/\${resource.dataset_id}\`);
           const datasetData = await datasetResponse.json();
 
           if (!datasetData.success || !datasetData.data) {

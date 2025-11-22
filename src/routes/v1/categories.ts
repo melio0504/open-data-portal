@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is acceptable in Hono routes */
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { query } from "../lib/db";
-import { CategoryListItemSchema, ErrorSchema } from "../lib/schemas";
-import type { Bindings, CategoryListItem } from "../lib/types";
+import { query } from "../../lib/db";
+import { CategoryListItemSchema, ErrorSchema } from "../../lib/schemas";
+import type { Bindings, CategoryListItem } from "../../lib/types";
 
 const app = new OpenAPIHono<{ Bindings: Bindings }>();
 

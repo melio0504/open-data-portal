@@ -178,7 +178,7 @@ app.get("/:id", async (c) => {
       async function loadDataset() {
         try {
           // Fetch dataset details
-          const datasetResponse = await fetch(\`/api/datasets/\${datasetId}\`);
+          const datasetResponse = await fetch(\`/api/v1/datasets/\${datasetId}\`);
           const datasetData = await datasetResponse.json();
 
           if (!datasetData.success || !datasetData.data) {
@@ -205,7 +205,7 @@ app.get("/:id", async (c) => {
         try {
           if (!dataset) {
             // Fetch dataset if not provided
-            const datasetResponse = await fetch(\`/api/datasets/\${datasetId}\`);
+            const datasetResponse = await fetch(\`/api/v1/datasets/\${datasetId}\`);
             const datasetData = await datasetResponse.json();
             if (!datasetData.success || !datasetData.data) {
               return;
@@ -218,7 +218,7 @@ app.get("/:id", async (c) => {
           params.set('limit', currentResourceFilters.limit);
           params.set('offset', currentResourceFilters.offset);
 
-          const resourcesResponse = await fetch(\`/api/resources?\` + params.toString());
+          const resourcesResponse = await fetch(\`/api/v1/resources?\` + params.toString());
           const resourcesData = await resourcesResponse.json();
 
           if (resourcesData.success) {

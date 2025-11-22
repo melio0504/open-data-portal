@@ -146,7 +146,7 @@ app.get("/", async (c) => {
       // Load statistics
       async function loadStats() {
         try {
-          const response = await fetch('/api/stats');
+          const response = await fetch('/api/v1/stats');
           const data = await response.json();
 
           if (data.success && data.data) {
@@ -223,7 +223,7 @@ app.get("/", async (c) => {
       // Load recent datasets
       async function loadRecentDatasets() {
         try {
-          const response = await fetch('/api/datasets?sort=latest_version_date&dir=desc&limit=6');
+          const response = await fetch('/api/v1/datasets?sort=latest_version_date&dir=desc&limit=6');
           const data = await response.json();
 
           if (data.success && data.data) {

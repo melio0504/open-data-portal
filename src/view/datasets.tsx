@@ -212,8 +212,8 @@ app.get("/", async (c) => {
           async function loadFilters() {
               try {
                   const [catResponse, pubResponse] = await Promise.all([
-                      fetch('/api/categories'),
-                      fetch('/api/publishers')
+                      fetch('/api/v1/categories'),
+                      fetch('/api/v1/publishers')
                   ]);
 
                   const catData = await catResponse.json();
@@ -361,7 +361,7 @@ app.get("/", async (c) => {
                   params.set('limit', currentFilters.limit);
                   params.set('offset', currentFilters.offset);
 
-                  const response = await fetch('/api/datasets?' + params.toString());
+                  const response = await fetch('/api/v1/datasets?' + params.toString());
                   const data = await response.json();
 
                   if (data.success && data.data) {
