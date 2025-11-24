@@ -7,6 +7,26 @@ interface LayoutProps {
   breadcrumbs?: Array<{ label: string; href?: string }>;
 }
 
+const navLinks = [
+  { href: "/datasets", label: "Datasets", path: "/datasets" },
+  { href: "/categories", label: "Categories", path: "/categories" },
+  { href: "/about", label: "About", path: "/about" },
+  { href: "/contribute", label: "Contribute", path: "/contribute" },
+];
+
+const projectLinks = [
+  { href: "https://bettergov.ph/join-us", label: "About BetterGov.ph" },
+  { href: "https://2026-budget.bettergov.ph", label: "2026 Budget" },
+  { href: "https://budget.bettergov.ph", label: "Budget" },
+  { href: "https://visualizations.bettergov.ph", label: "Research" },
+  { href: "https://bisto.ph", label: "Bisto Proyekto" },
+  {
+    href: "https://bettergov.ph/flood-control-projects",
+    label: "Flood Control Projects",
+  },
+  { href: "https://saln.bettergov.ph", label: "SALN Tracker" },
+];
+
 export function Layout({
   title = "Open Data Portal",
   children,
@@ -44,10 +64,18 @@ export function Layout({
 
               <!-- Desktop Navigation -->
               <nav class="hidden md:flex items-center space-x-8">
-                  <a href="/datasets" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors nav-link" data-path="/datasets">Datasets</a>
-                  <a href="/categories" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors nav-link" data-path="/categories">Categories</a>
-                  <a href="/about" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors nav-link" data-path="/about">About</a>
-                  <a href="/contribute" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors nav-link" data-path="/contribute">Contribute</a>
+                  ${navLinks.map((link) => html`<a href="${link.href}" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors nav-link" data-path="${link.path}">${link.label}</a>`)}
+                  <div class="relative dropdown-container">
+                      <button class="text-neutral-700 hover:text-primary-600 font-medium transition-colors flex items-center space-x-1 dropdown-trigger"
+                              aria-haspopup="true"
+                              aria-expanded="false">
+                          <span>Our Projects</span>
+                          <i data-lucide="chevron-down" class="w-4 h-4 dropdown-icon"></i>
+                      </button>
+                      <div class="dropdown-menu hidden absolute top-full right-0 mt-2 w-64 bg-white border border-neutral-200 rounded-lg shadow-lg py-2 z-50">
+                          ${projectLinks.map((link) => html`<a href="${link.href}" target="_blank" class="block px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-100 hover:text-primary-600 transition-colors">${link.label}</a>`)}
+                      </div>
+                  </div>
               </nav>
 
               <!-- Mobile Menu Button -->
@@ -59,10 +87,16 @@ export function Layout({
           <!-- Mobile Navigation Menu -->
           <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-neutral-200">
               <nav class="flex flex-col space-y-3">
-                  <a href="/datasets" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2 nav-link" data-path="/datasets">Datasets</a>
-                  <a href="/categories" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2 nav-link" data-path="/categories">Categories</a>
-                  <a href="/about" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2 nav-link" data-path="/about">About</a>
-                  <a href="/contribute" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2 nav-link" data-path="/contribute">Contribute</a>
+                  ${navLinks.map((link) => html`<a href="${link.href}" class="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2 nav-link" data-path="${link.path}">${link.label}</a>`)}
+                  <div class="dropdown-container">
+                      <button class="text-neutral-700 hover:text-primary-600 font-medium transition-colors py-2 flex items-center justify-between w-full dropdown-trigger">
+                          <span>Our Projects</span>
+                          <i data-lucide="chevron-down" class="w-4 h-4 dropdown-icon"></i>
+                      </button>
+                      <div class="dropdown-menu hidden flex-col space-y-2 pl-4 mt-2">
+                          ${projectLinks.map((link) => html`<a href="${link.href}" target="_blank" class="text-neutral-600 hover:text-primary-600 text-sm transition-colors py-1 block">${link.label}</a>`)}
+                      </div>
+                  </div>
               </nav>
           </div>
       </div>
@@ -164,6 +198,52 @@ export function Layout({
               mobileMenu.classList.toggle('hidden');
           });
       }
+
+      // Unified dropdown handler for both desktop and mobile
+      const dropdownContainers = document.querySelectorAll('.dropdown-container');
+      dropdownContainers.forEach(container => {
+          const trigger = container.querySelector('.dropdown-trigger');
+          const menu = container.querySelector('.dropdown-menu');
+          const icon = container.querySelector('.dropdown-icon');
+
+          if (trigger && menu) {
+              trigger.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  const isHidden = menu.classList.contains('hidden');
+                  const isMobile = window.innerWidth < 768;
+
+                  // Close other dropdowns
+                  document.querySelectorAll('.dropdown-menu').forEach(m => {
+                      if (m !== menu) {
+                          m.classList.add('hidden');
+                          if (!isMobile) m.classList.remove('flex');
+                      }
+                  });
+
+                  // Toggle current dropdown
+                  if (isHidden) {
+                      menu.classList.remove('hidden');
+                      if (isMobile) menu.classList.add('flex');
+                      if (icon) icon.style.transform = 'rotate(180deg)';
+                      trigger.setAttribute('aria-expanded', 'true');
+                  } else {
+                      menu.classList.add('hidden');
+                      if (isMobile) menu.classList.remove('flex');
+                      if (icon) icon.style.transform = 'rotate(0deg)';
+                      trigger.setAttribute('aria-expanded', 'false');
+                  }
+              });
+
+              // Close dropdown on outside click (desktop only)
+              document.addEventListener('click', (e) => {
+                  const isMobile = window.innerWidth < 768;
+                  if (!isMobile && !container.contains(e.target)) {
+                      menu.classList.add('hidden');
+                      trigger.setAttribute('aria-expanded', 'false');
+                  }
+              });
+          }
+      });
 
       // Highlight active navigation link
       const currentPath = window.location.pathname;
