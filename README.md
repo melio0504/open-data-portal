@@ -66,7 +66,6 @@ A community-run portal (and API) for exploring publicly available datasets.
 
 - **OpenAPI Schema:** `/openapi.json`
 - **Swagger UI:** `/docs`
-- **Scalar Reference:** `/reference`
 
 ## License
 
