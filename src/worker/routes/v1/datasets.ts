@@ -1,6 +1,8 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is acceptable in Hono routes */
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
+import { RATE_LIMIT_CONFIG } from "../../lib/config/rate-limit.ts"
 import { query, queryOne } from "../../lib/db.ts"
+import { rateLimit } from "../../lib/middleware/rate-limit.ts"
 import {
   createApiResponseSchema,
   DatasetDetailSchema,
@@ -9,11 +11,14 @@ import {
   ErrorResponseSchema,
   PaginationInfoSchema,
   parseAttribution,
+  RateLimitErrorResponseSchema,
 } from "../../lib/schemas.ts"
 import type { DatasetDetail, DatasetListItem } from "../../lib/types.ts"
 import { calculatePagination, sanitizeFTSQuery } from "../../lib/utils.ts"
 
 const app = new OpenAPIHono()
+app.use("/", rateLimit({ config: RATE_LIMIT_CONFIG.search }))
+app.use("/:id", rateLimit({ config: RATE_LIMIT_CONFIG.detail }))
 
 const listDatasetsRoute = createRoute({
   method: "get",
@@ -21,7 +26,7 @@ const listDatasetsRoute = createRoute({
   tags: ["Datasets"],
   summary: "List all datasets",
   description:
-    "Get a paginated list of datasets with optional filtering, search, and sorting",
+    "Get a paginated list of datasets with optional filtering, search, and sorting. Rate limit: 20 requests per minute.",
   request: {
     query: DatasetListQuerySchema,
   },
@@ -43,6 +48,14 @@ const listDatasetsRoute = createRoute({
       content: {
         "application/json": {
           schema: ErrorResponseSchema,
+        },
+      },
+    },
+    429: {
+      description: "Rate limit exceeded",
+      content: {
+        "application/json": {
+          schema: RateLimitErrorResponseSchema,
         },
       },
     },
@@ -178,7 +191,8 @@ const getDatasetRoute = createRoute({
   path: "/{id}",
   tags: ["Datasets"],
   summary: "Get dataset details",
-  description: "Get full details of a specific dataset",
+  description:
+    "Get full details of a specific dataset. Rate limit: 100 requests per minute.",
   request: {
     params: z.object({
       id: z.coerce.number().int().positive(),
@@ -198,6 +212,14 @@ const getDatasetRoute = createRoute({
       content: {
         "application/json": {
           schema: ErrorResponseSchema,
+        },
+      },
+    },
+    429: {
+      description: "Rate limit exceeded",
+      content: {
+        "application/json": {
+          schema: RateLimitErrorResponseSchema,
         },
       },
     },

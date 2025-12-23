@@ -1,13 +1,18 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
+import { RATE_LIMIT_CONFIG } from "../../lib/config/rate-limit.ts"
+import { rateLimit } from "../../lib/middleware/rate-limit.ts"
+import { RateLimitErrorResponseSchema } from "../../lib/schemas.ts"
 
 const app = new OpenAPIHono()
+app.use("/", rateLimit({ config: RATE_LIMIT_CONFIG.ping }))
 
 const pingRoute = createRoute({
   method: "get",
   path: "/",
   tags: ["Health"],
   summary: "Health check",
-  description: "Check if the API is running",
+  description:
+    "Check if the API is running. Rate limit: 1000 requests per minute.",
   responses: {
     200: {
       description: "API is healthy",
@@ -20,6 +25,14 @@ const pingRoute = createRoute({
               timestamp: z.string(),
             }),
           }),
+        },
+      },
+    },
+    429: {
+      description: "Rate limit exceeded",
+      content: {
+        "application/json": {
+          schema: RateLimitErrorResponseSchema,
         },
       },
     },

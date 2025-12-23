@@ -16,7 +16,7 @@ export const HomePage = () => {
 
   const { datasets: recentDatasets, isLoading: datasetsLoading } = useDatasets({
     sort: "latest_version_date",
-    limit: 6,
+    limit: 10,
   })
 
   const handleSearchSubmit = (e: FormEvent) => {
@@ -122,25 +122,27 @@ export const HomePage = () => {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {datasetsLoading ? (
-              <LoadingSkeleton variant="dataset-card" count={6} />
+              <LoadingSkeleton variant="dataset-card" count={9} />
             ) : recentDatasets.length === 0 ? (
               <p className="col-span-full text-center text-neutral-500">
                 No datasets available yet
               </p>
             ) : (
-              recentDatasets.map((dataset) => (
-                <DatasetCard
-                  key={dataset.id}
-                  id={dataset.id}
-                  name={dataset.name}
-                  description={dataset.description || ""}
-                  publisher={dataset.publisher?.name || "Unknown"}
-                  category={dataset.category?.name || "Unknown"}
-                  resourceCount={dataset.resource_count}
-                  sizeBytes={dataset.size_bytes}
-                  latestVersionDate={dataset.latest_version_date || ""}
-                />
-              ))
+              recentDatasets
+                .slice(0, Math.min(9, recentDatasets.length))
+                .map((dataset) => (
+                  <DatasetCard
+                    key={dataset.id}
+                    id={dataset.id}
+                    name={dataset.name}
+                    description={dataset.description || ""}
+                    publisher={dataset.publisher?.name || "Unknown"}
+                    category={dataset.category?.name || "Unknown"}
+                    resourceCount={dataset.resource_count}
+                    sizeBytes={dataset.size_bytes}
+                    latestVersionDate={dataset.latest_version_date || ""}
+                  />
+                ))
             )}
           </div>
           <div className="text-center mt-8">

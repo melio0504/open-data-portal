@@ -1,23 +1,29 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is acceptable in Hono routes */
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi"
+import { RATE_LIMIT_CONFIG } from "../../lib/config/rate-limit.ts"
 import { query, queryOne } from "../../lib/db.ts"
+import { rateLimit } from "../../lib/middleware/rate-limit.ts"
 import {
   createApiResponseSchema,
   ErrorResponseSchema,
   PaginationInfoSchema,
+  RateLimitErrorResponseSchema,
   ResourceSchema,
 } from "../../lib/schemas.ts"
 import type { Resource } from "../../lib/types.ts"
 import { calculatePagination } from "../../lib/utils.ts"
 
 const app = new OpenAPIHono()
+app.use("/", rateLimit({ config: RATE_LIMIT_CONFIG.list }))
+app.use("/:id", rateLimit({ config: RATE_LIMIT_CONFIG.detail }))
 
 const listResourcesRoute = createRoute({
   method: "get",
   path: "/",
   tags: ["Resources"],
   summary: "List resources for a dataset",
-  description: "Get a paginated list of resources for a specific dataset",
+  description:
+    "Get a paginated list of resources for a specific dataset. Rate limit: 60 requests per minute.",
   request: {
     query: z.object({
       dataset_id: z.coerce
@@ -56,6 +62,14 @@ const listResourcesRoute = createRoute({
       content: {
         "application/json": {
           schema: ErrorResponseSchema,
+        },
+      },
+    },
+    429: {
+      description: "Rate limit exceeded",
+      content: {
+        "application/json": {
+          schema: RateLimitErrorResponseSchema,
         },
       },
     },
@@ -115,7 +129,8 @@ const getResourceRoute = createRoute({
   path: "/{id}",
   tags: ["Resources"],
   summary: "Get resource details",
-  description: "Get full details of a specific resource",
+  description:
+    "Get full details of a specific resource. Rate limit: 100 requests per minute.",
   request: {
     params: z.object({
       id: z.coerce.number().int().positive(),
@@ -135,6 +150,14 @@ const getResourceRoute = createRoute({
       content: {
         "application/json": {
           schema: ErrorResponseSchema,
+        },
+      },
+    },
+    429: {
+      description: "Rate limit exceeded",
+      content: {
+        "application/json": {
+          schema: RateLimitErrorResponseSchema,
         },
       },
     },

@@ -1,23 +1,28 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: any is acceptable in Hono routes */
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi"
+import { RATE_LIMIT_CONFIG } from "../../lib/config/rate-limit.ts"
 import { query, queryOne } from "../../lib/db.ts"
+import { rateLimit } from "../../lib/middleware/rate-limit.ts"
 import {
   createApiResponseSchema,
   PaginationInfoSchema,
   PublisherListQuerySchema,
   PublisherSchema,
+  RateLimitErrorResponseSchema,
 } from "../../lib/schemas.ts"
 import type { Publisher } from "../../lib/types.ts"
 import { calculatePagination } from "../../lib/utils.ts"
 
 const app = new OpenAPIHono()
+app.use("/", rateLimit({ config: RATE_LIMIT_CONFIG.list }))
 
 const listPublishersRoute = createRoute({
   method: "get",
   path: "/",
   tags: ["Publishers"],
   summary: "List all publishers",
-  description: "Get a paginated list of publishers",
+  description:
+    "Get a paginated list of publishers. Rate limit: 60 requests per minute.",
   request: {
     query: PublisherListQuerySchema,
   },
@@ -29,6 +34,14 @@ const listPublishersRoute = createRoute({
           schema: createApiResponseSchema(PublisherSchema.array()).extend({
             pagination: PaginationInfoSchema,
           }),
+        },
+      },
+    },
+    429: {
+      description: "Rate limit exceeded",
+      content: {
+        "application/json": {
+          schema: RateLimitErrorResponseSchema,
         },
       },
     },

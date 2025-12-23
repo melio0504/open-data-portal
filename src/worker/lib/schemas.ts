@@ -158,7 +158,7 @@ export const DatasetDetailSchema = DatasetApiSchema.extend({
 }).openapi("DatasetDetail")
 
 export const PaginationQuerySchema = z.object({
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+  limit: z.coerce.number().int().min(10).max(100).optional().default(10),
   offset: z.coerce.number().int().min(0).optional().default(0),
 })
 
@@ -199,6 +199,23 @@ export const StatsSchema = z
   })
   .openapi("Stats")
 
+export const RateLimitErrorDetailsSchema = z
+  .object({
+    limit: z.number().int().positive().openapi({
+      example: 100,
+      description: "Maximum number of requests allowed in the time window",
+    }),
+    windowMs: z.number().int().positive().openapi({
+      example: 60000,
+      description: "Time window in milliseconds",
+    }),
+    retryAfter: z.number().int().positive().openapi({
+      example: 45,
+      description: "Seconds until the rate limit resets",
+    }),
+  })
+  .openapi("RateLimitErrorDetails")
+
 export const ErrorSchema = z
   .object({
     code: z.string().openapi({
@@ -221,6 +238,19 @@ export const ErrorResponseSchema = z
     error: ErrorSchema,
   })
   .openapi("ErrorResponse")
+
+export const RateLimitErrorResponseSchema = z
+  .object({
+    success: z.literal(false),
+    error: z.object({
+      code: z.literal("RATE_LIMIT_EXCEEDED"),
+      message: z.string().openapi({
+        example: "Too many requests. Please try again later.",
+      }),
+      details: RateLimitErrorDetailsSchema,
+    }),
+  })
+  .openapi("RateLimitErrorResponse")
 
 export const createApiResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T,
