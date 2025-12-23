@@ -157,6 +157,31 @@ export const HomePage = () => {
         </div>
       </div>
 
+      <div className="bg-neutral-800 py-16">
+        <div className="container-custom">
+          <div className="max-w-4xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Access Data Programmatically
+            </h2>
+            <p className="text-lg text-neutral-200 mb-8 max-w-2xl mx-auto">
+              Integrate directly with your applications, scripts, and workflows
+              through the Open Data Portal API.
+            </p>
+            <div className="flex justify-center">
+              <a
+                href="/docs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center px-8 py-4 bg-white text-neutral-800 rounded-lg font-semibold hover:bg-neutral-100 transition-all-smooth shadow-lg hover:shadow-xl hover:scale-105"
+              >
+                View API Documentation
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-neutral-50 py-12">
         <div className="container-custom">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
